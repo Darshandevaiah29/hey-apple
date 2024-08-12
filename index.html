@@ -1,0 +1,122 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Wishes</title>
+    <style>
+        body {
+            transition: background-color 0.5s;
+            text-align: center;
+            font-family: Times, New Roman;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color:black; /* Purple background */
+            color:purple;
+        }
+        #message {
+            display: none;
+            font-size: 2em;
+            margin: 20px;
+        }
+        #balloon-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            width: 50px;
+            height: 70px;
+            background: radial-gradient(circle at 50% 50%, #fff, #ccc);
+            border-radius: 50% 50% 0 0;
+            animation: float 5s linear infinite;
+        }
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-100vh);
+            }
+        }
+        #reveal {
+            display: none;
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
+        @media (max-width: 600px) {
+            #message {
+                font-size: 1.5em;
+            }
+            #reveal {
+                font-size: 1.2em;
+            }
+            .balloon {
+                width: 30px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Hey Apple!</h1>
+    <label>
+        <input type="checkbox" id="lightSwitch"> Turn on the lights
+    </label>
+    <div id="message">
+        <p>Happy Birthday, Ananya Borkar!</p>
+        <button id="decorateButton">Let's Decorate!</button>
+    </div>
+    <div id="balloon-container"></div>
+    <button id="revealButton">Reveal Birthday Message</button>
+    <div id="reveal">
+        <p>Happy Birthday from Dev! 🎉</p>
+        <p>"May your birthday be the start of a year filled with good luck, good health, and much happiness."</p>
+    </div>
+
+    <script>
+        const lightSwitch = document.getElementById('lightSwitch');
+        const message = document.getElementById('message');
+        const decorateButton = document.getElementById('decorateButton');
+        const revealButton = document.getElementById('revealButton');
+        const reveal = document.getElementById('reveal');
+        const balloonContainer = document.getElementById('balloon-container');
+
+        lightSwitch.addEventListener('change', () => {
+            if (lightSwitch.checked) {
+                document.body.style.backgroundColor = '#f0f8ff'; // Light background
+                message.style.display = 'block';
+            } else {
+                document.body.style.backgroundColor = '#6a0dad'; // Purple background
+                message.style.display = 'none';
+                reveal.style.display = 'none';
+                balloonContainer.innerHTML = '';
+            }
+        });
+
+        decorateButton.addEventListener('click', () => {
+            const numBalloons = 10;
+            for (let i = 0; i < numBalloons; i++) {
+                const balloon = document.createElement('div');
+                balloon.classList.add('balloon');
+                balloon.style.left = `${Math.random() * 100}vw`;
+                balloon.style.animationDuration = `${Math.random() * 5 + 5}s`;
+                balloonContainer.appendChild(balloon);
+            }
+        });
+
+        revealButton.addEventListener('click', () => {
+            reveal.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
