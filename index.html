@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,15 +12,19 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color:black; /* Purple background */
-            color:purple;
+            background-color: black;
+            color: purple;
+        }
+        h1 {
+            margin-top: 20px;
         }
         #message {
             display: none;
             font-size: 2em;
             margin: 20px;
+            animation: fadeIn 1.5s ease-in;
         }
-        #balloon-container {
+        #balloon-container, #fireworks-container {
             position: absolute;
             top: 0;
             left: 0;
@@ -41,29 +44,46 @@
             animation: float 5s linear infinite;
         }
         @keyframes float {
-            0% {
-                transform: translateY(0);
-            }
-            100% {
-                transform: translateY(-100vh);
-            }
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-100vh); }
+        }
+        #countdown {
+            display: none;
+            font-size: 1.5em;
+            margin-top: 15px;
+            color: gold;
+            animation: slideUp 1.5s ease-out;
+        }
+        @keyframes slideUp {
+            0% { transform: translateY(30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
         }
         #reveal {
             display: none;
             font-size: 1.5em;
             margin-top: 20px;
+            animation: fadeIn 1.5s ease-in;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .spark {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            opacity: 0.9;
+            animation: sparkle 1s ease-out forwards;
+        }
+        @keyframes sparkle {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--dx), var(--dy)) scale(0.5); opacity: 0; }
         }
         @media (max-width: 600px) {
-            #message {
-                font-size: 1.5em;
-            }
-            #reveal {
-                font-size: 1.2em;
-            }
-            .balloon {
-                width: 30px;
-                height: 40px;
-            }
+            #message { font-size: 1.5em; }
+            #reveal { font-size: 1.2em; }
+            .balloon { width: 30px; height: 40px; }
         }
     </style>
 </head>
@@ -73,15 +93,19 @@
         <input type="checkbox" id="lightSwitch"> Turn on the lights
     </label>
     <div id="message">
-        <p>Happy Birthday, Ananya Borkar!</p>
+        <p id="birthdayText"></p>
         <button id="decorateButton">Let's Decorate!</button>
+        <div id="countdown"></div>
     </div>
     <div id="balloon-container"></div>
+    <div id="fireworks-container"></div>
     <button id="revealButton">Reveal Birthday Message</button>
     <div id="reveal">
         <p>Happy Birthday from Dev! 🎉</p>
         <p>"May your birthday be the start of a year filled with good luck, good health, and much happiness."</p>
     </div>
+
+    <marquee> With luv ❤️🎂🫰🏻</marquee>
 
     <script>
         const lightSwitch = document.getElementById('lightSwitch');
@@ -90,34 +114,110 @@
         const revealButton = document.getElementById('revealButton');
         const reveal = document.getElementById('reveal');
         const balloonContainer = document.getElementById('balloon-container');
+        const fireworksContainer = document.getElementById('fireworks-container');
+        const countdownEl = document.getElementById('countdown');
+        const birthdayText = document.getElementById('birthdayText');
 
-        lightSwitch.addEventListener('change', () => {
-            if (lightSwitch.checked) {
-                document.body.style.backgroundColor = '#f0f8ff'; // Light background
-                message.style.display = 'block';
-            } else {
-                document.body.style.backgroundColor = '#6a0dad'; // Purple background
-                message.style.display = 'none';
-                reveal.style.display = 'none';
-                balloonContainer.innerHTML = '';
+        const birthdayMonth = 7; // August (0 = Jan, so 7 = August)
+        const birthdayDay = 13;  // Exact birthday date
+
+        function updateBirthdayText() {
+            const now = new Date();
+            birthdayText.textContent = `Happy Birthday, Ananya Borkar! ${now.getFullYear()}`;
+        }
+
+        function startCountdown() {
+            countdownEl.style.display = 'block';
+            function updateCountdown() {
+                const now = new Date();
+                let nextBirthday = new Date(now.getFullYear(), birthdayMonth, birthdayDay);
+
+                if (now > nextBirthday) {
+                    nextBirthday = new Date(now.getFullYear() + 1, birthdayMonth, birthdayDay);
+                }
+
+                const diff = nextBirthday - now;
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                const minutes = Math.floor((diff / (1000 * 60)) % 60);
+                const seconds = Math.floor((diff / 1000) % 60);
+
+                countdownEl.textContent = `Countdown to next birthday: ${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+                if (diff <= 0) {
+                    countdownEl.textContent = "🎉 It's your birthday! 🎉";
+                    createBalloons(15);
+                    launchFireworks();
+                }
             }
-        });
+            updateCountdown();
+            setInterval(updateCountdown, 1000);
+        }
 
-        decorateButton.addEventListener('click', () => {
-            const numBalloons = 10;
-            for (let i = 0; i < numBalloons; i++) {
+        function createBalloons(num) {
+            for (let i = 0; i < num; i++) {
                 const balloon = document.createElement('div');
                 balloon.classList.add('balloon');
                 balloon.style.left = `${Math.random() * 100}vw`;
                 balloon.style.animationDuration = `${Math.random() * 5 + 5}s`;
                 balloonContainer.appendChild(balloon);
             }
+        }
+
+        function launchFireworks() {
+            let fireworksInterval = setInterval(() => {
+                createFirework();
+            }, 500);
+
+            setTimeout(() => clearInterval(fireworksInterval), 5000);
+        }
+
+        function createFirework() {
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight / 2; // top half of screen
+            const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff'];
+
+            for (let i = 0; i < 20; i++) {
+                const spark = document.createElement('div');
+                spark.classList.add('spark');
+                spark.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                const angle = (Math.PI * 2 * i) / 20;
+                const distance = 80 + Math.random() * 40;
+                spark.style.setProperty('--dx', `${Math.cos(angle) * distance}px`);
+                spark.style.setProperty('--dy', `${Math.sin(angle) * distance}px`);
+
+                spark.style.left = `${x}px`;
+                spark.style.top = `${y}px`;
+
+                fireworksContainer.appendChild(spark);
+                setTimeout(() => spark.remove(), 1000);
+            }
+        }
+
+        lightSwitch.addEventListener('change', () => {
+            if (lightSwitch.checked) {
+                document.body.style.backgroundColor = '#f0f8ff';
+                updateBirthdayText();
+                message.style.display = 'block';
+                startCountdown();
+            } else {
+                document.body.style.backgroundColor = '#6a0dad';
+                message.style.display = 'none';
+                reveal.style.display = 'none';
+                countdownEl.style.display = 'none';
+                balloonContainer.innerHTML = '';
+                fireworksContainer.innerHTML = '';
+            }
+        });
+
+        decorateButton.addEventListener('click', () => {
+            createBalloons(10);
         });
 
         revealButton.addEventListener('click', () => {
             reveal.style.display = 'block';
         });
     </script>
-    <marquee> With luv ❤️🎂🫰🏻</marquee>
 </body>
 </html>
