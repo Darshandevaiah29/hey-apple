@@ -223,8 +223,6 @@ const lightSwitch = document.getElementById('lightSwitch');
 const page = document.getElementById('page');
 const countdownEl = document.getElementById('countdown');
 const poemEl = document.getElementById('poem');
-const art1 = document.getElementById('art1');
-const art2 = document.getElementById('art2');
 const finalMessage = document.getElementById('finalMessage');
 const quoteEl = document.getElementById('quote');
 const balloonContainer = document.getElementById('balloon-container');
@@ -341,28 +339,6 @@ function spawnBalloons(count = 14){
     }, (parseFloat(dur) * 1000) + 600);
   }
 }
-
-/* Art fade-in sequence */
-function revealArtworks(){
-  // reset
-  art1.style.opacity = 0; art1.style.transform = 'translateY(12px)';
-  art2.style.opacity = 0; art2.style.transform = 'translateY(12px)';
-
-  // first image fades (add class)
-  setTimeout(()=> {
-    art1.classList.add('fade-in');
-    art1.style.opacity = 1;
-    art1.style.transform = 'translateY(0)';
-  }, 350);
-
-  // second image fades later
-  setTimeout(()=> {
-    art2.classList.add('fade-in');
-    art2.style.opacity = 1;
-    art2.style.transform = 'translateY(0)';
-  }, 950);
-}
-
 /* Lights on behavior */
 function lightsOn(){
   // set warm romantic gradient
@@ -379,8 +355,6 @@ function lightsOn(){
   typeWriter(poemText, poemEl, 55, () => {
     // after typing completes:
     startCountdown();
-    // fade in artworks
-    revealArtworks();
     // show final quote with delay
     setTimeout(()=> {
       quoteEl.classList.add('fade-in-delay-2');
@@ -405,8 +379,6 @@ function lightsOff(){
   // hide poem/art/quote
   poemEl.textContent = '';
   poemEl.style.opacity = 0;
-  art1.style.opacity = 0;
-  art2.style.opacity = 0;
   quoteEl.style.opacity = 0;
   finalMessage.style.opacity = 0;
   // clear balloons
