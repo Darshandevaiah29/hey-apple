@@ -1,182 +1,477 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Birthday Surprise</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Birthday Surprise — Ananya</title>
+
+<!-- Elegant serif font -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+
 <style>
-    body {
-        text-align: center;
-        font-family: 'Times New Roman', serif;
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        background-color: black;
-        color: purple;
-        transition: background 1s;
-    }
-    h1 { margin-top: 20px; }
-    #message, #countdown, #romanticText, #finalMessage {
-        display: none;
-        margin: 20px;
-    }
-    #countdown {
-        font-size: 1.5em;
-        font-weight: bold;
-        color: gold;
-    }
-    #romanticText {
-        font-size: 1.5em;
-        white-space: pre-wrap;
-        min-height: 2em;
-    }
-    #balloon-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: -1;
-    }
-    .balloon {
-        position: absolute;
-        bottom: -100px;
-        width: 50px;
-        height: 70px;
-        background: radial-gradient(circle at 50% 50%, #fff, #ccc);
-        border-radius: 50% 50% 0 0;
-        animation: float 6s linear infinite;
-    }
-    @keyframes float {
-        0% { transform: translateY(0); }
-        100% { transform: translateY(-110vh); }
-    }
-    @media (max-width: 600px) {
-        #countdown { font-size: 1.2em; }
-        #romanticText { font-size: 1.2em; }
-        .balloon { width: 30px; height: 40px; }
-    }
+  :root{
+    --soft-pink: #ffd6e0;
+    --peach: #ffd1b3;
+    --warm-orange: #ffd89b;
+    --white: #ffffff;
+    --gold: #d99a4a;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: "Playfair Display", serif;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    background: linear-gradient(135deg,#111 0%, #111 100%); /* dark start */
+    color:#2b1b2b;
+    overflow:hidden;
+  }
+
+  .container{
+    position:relative;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:36px 20px;
+    box-sizing:border-box;
+  }
+
+  h1{
+    margin:18px 0 6px;
+    color: #fff;
+    font-weight:600;
+    letter-spacing:0.6px;
+    font-size:28px;
+  }
+
+  label{
+    color:#fff;
+    font-size:16px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom: 8px;
+  }
+
+  input[type="checkbox"]{
+    width:18px;
+    height:18px;
+    transform: translateY(1px);
+  }
+
+  /* Countdown */
+  #countdown{
+    margin-top:14px;
+    font-size:18px;
+    color: #fff;
+    opacity:0.95;
+    letter-spacing:0.4px;
+  }
+
+  /* Poem and quote */
+  #poem {
+    margin-top:22px;
+    max-width:780px;
+    width:90%;
+    font-size:20px;
+    color:#ffffff;
+    min-height:3.2em;
+    white-space:pre-wrap;
+    text-align:center;
+    opacity:0;
+  }
+
+  #quote {
+    margin-top:16px;
+    font-size:18px;
+    color:#fff7ea;
+    text-align:center;
+    opacity:0;
+  }
+
+  /* Artwork area */
+  .artwork-wrap{
+    position:relative;
+    margin-top:20px;
+    width:min(920px, 95%);
+    display:flex;
+    gap:18px;
+    justify-content:center;
+    align-items:center;
+    pointer-events:none; /* decorative */
+  }
+
+  .artwork{
+    width:48%;
+    max-width:420px;
+    border-radius:12px;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.35);
+    transform: translateY(12px);
+    opacity:0;
+    transition: opacity 1s ease, transform 1s ease;
+    object-fit:cover;
+    pointer-events:auto;
+  }
+
+  /* final message area */
+  #finalMessage{
+    margin-top:22px;
+    font-size:20px;
+    color:#ffffff;
+    text-align:center;
+    opacity:0;
+    transform: translateY(6px);
+  }
+
+  /* balloons container */
+  #balloon-container{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:4;
+  }
+  .balloon {
+    position:absolute;
+    bottom:-120px;
+    width:56px;
+    height:78px;
+    background: white;
+    border-radius: 50% 50% 46% 46%;
+    box-shadow: 0 6px 20px rgba(255,255,255,0.9), 0 2px 6px rgba(0,0,0,0.12);
+    transform-origin:center bottom;
+    animation: floatUp linear forwards;
+    opacity:0.98;
+  }
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg); opacity:1; }
+    100% { transform: translateY(-120vh) rotate(25deg); opacity:0.95; }
+  }
+
+  /* gentle fades when lights on */
+  .lights-on-bg{
+    background: linear-gradient(135deg, var(--soft-pink) 0%, var(--peach) 50%, var(--warm-orange) 100%);
+  }
+
+  .fade-in {
+    animation: appear 900ms ease-out forwards;
+  }
+  .fade-in-delay {
+    animation: appear 900ms ease-out 400ms forwards;
+  }
+  .fade-in-delay-2 {
+    animation: appear 900ms ease-out 900ms forwards;
+  }
+  .fade-in-delay-3 {
+    animation: appear 900ms ease-out 1500ms forwards;
+  }
+  @keyframes appear {
+    from { opacity:0; transform: translateY(12px); }
+    to { opacity:1; transform: translateY(0); }
+  }
+
+  /* poem typewriter caret */
+  .typing-caret::after{
+    content: "";
+    display:inline-block;
+    width:2px;
+    height:1.1em;
+    background: #fff;
+    margin-left:6px;
+    vertical-align:middle;
+    animation: blink 1s steps(1) infinite;
+    opacity:0.95;
+  }
+  @keyframes blink{ 50% { opacity:0; } }
+
+  /* responsive */
+  @media (max-width:880px){
+    .artwork { width:44%; max-width:260px; }
+    #poem { font-size:18px; }
+  }
+  @media (max-width:520px){
+    h1 { font-size:20px; }
+    .artwork-wrap { flex-direction:column; gap:12px; }
+    .artwork { width:90%; }
+    #poem { font-size:16px; }
+  }
+
+  /* small footer marquee-ish */
+  footer{
+    position: absolute;
+    bottom:8px;
+    left:0;
+    right:0;
+    text-align:center;
+    color: rgba(255,255,255,0.85);
+    font-size:12px;
+    z-index:6;
+  }
 </style>
 </head>
 <body>
+  <div class="container" id="page">
+    <h1>Hey Apple! 💜</h1>
 
-<h1>Hey Apple!</h1>
-<label>
-    <input type="checkbox" id="lightSwitch"> Turn on the lights
-</label>
+    <label><input type="checkbox" id="lightSwitch"> Turn on the lights</label>
 
-<div id="romanticText"></div>
-<div id="countdown"></div>
-<div id="balloon-container"></div>
+    <div id="countdown" aria-live="polite">Loading countdown…</div>
 
-<div id="finalMessage">
-    <h2>🎉 Happy Birthday, Ananya Borkar! 🎉</h2>
-    <p>May your birthday be the start of a year filled with love, joy, and endless blessings.</p>
-</div>
+    <div id="poem" aria-hidden="true"></div>
 
-<!-- Background music -->
-<audio id="bgMusic" loop>
-    <source src="Sariyagi-Nenapide-Nanage.mp3" type="audio/mpeg">
-</audio>
+    <div class="artwork-wrap" aria-hidden="true">
+      <img id="art1" class="artwork" src="Apple 1.png" alt="Artwork 1">
+      <img id="art2" class="artwork" src="Apple 2.png" alt="Artwork 2">
+    </div>
+
+    <div id="finalMessage">
+      <div id="quote" style="font-style:italic;">"May your days be painted in the colors of joy, your nights lit by the stars of hope, and your heart always surrounded by love."</div>
+    </div>
+
+    <div id="balloon-container" aria-hidden="true"></div>
+
+    <!-- audio (user uploaded to repo) -->
+    <audio id="bgMusic" loop preload="auto">
+      <source src="Sariyagi-Nenapide-Nanage.mp3" type="audio/mpeg">
+    </audio>
+
+    <footer> ❤️🎂🫰🏻</footer>
+  </div>
 
 <script>
+/*  Final interactive behavior (robust & cleaned)  */
+
 const lightSwitch = document.getElementById('lightSwitch');
-const romanticTextEl = document.getElementById('romanticText');
+const page = document.getElementById('page');
 const countdownEl = document.getElementById('countdown');
-const balloonContainer = document.getElementById('balloon-container');
+const poemEl = document.getElementById('poem');
+const art1 = document.getElementById('art1');
+const art2 = document.getElementById('art2');
 const finalMessage = document.getElementById('finalMessage');
+const quoteEl = document.getElementById('quote');
+const balloonContainer = document.getElementById('balloon-container');
 const bgMusic = document.getElementById('bgMusic');
 
-const romanticMessage = "Bol Na Kyu Yeh Chand Sitare... 💫 You’re my entire universe.";
+let countdownInterval = null;
 
-// Fade-in music
-function fadeInMusic(audio) {
+/* Poem text (one-sided love-at-first-sight)
+   Will be typed out with typewriter animation
+*/
+const poemText = `The first time our eyes met,
+time forgot to move.
+The world blurred,
+but you… you stayed in focus.
+Since then,
+every dream I have begins with you.`;
+
+/* Typewriter utility */
+function typeWriter(text, element, speed = 50, callback){
+  element.textContent = '';
+  element.classList.add('typing-caret');
+  let i = 0;
+  function step(){
+    if (i < text.length){
+      element.textContent += text.charAt(i);
+      i++;
+      setTimeout(step, speed);
+    } else {
+      element.classList.remove('typing-caret');
+      if (callback) callback();
+    }
+  }
+  step();
+}
+
+/* Countdown to next Aug 13 (auto next occurrence) */
+function computeNextBirthday(){
+  const now = new Date();
+  let year = now.getFullYear();
+  const candidate = new Date(year, 7, 13, 0, 0, 0, 0); // Aug (0-based -> 7)
+  if (now > candidate) candidate.setFullYear(year + 1);
+  return candidate;
+}
+
+function startCountdown(){
+  if (countdownInterval) clearInterval(countdownInterval);
+  function update(){
+    const now = new Date();
+    const target = computeNextBirthday();
+    let diff = target - now;
+
+    if (diff <= 0){
+      countdownEl.textContent = "🎉 It's her special day! 🎉";
+      clearInterval(countdownInterval);
+      return;
+    }
+
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff / (1000*60*60)) % 24);
+    const minutes = Math.floor((diff / (1000*60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
+
+    countdownEl.textContent = `⏳ ${days}d ${hours}h ${minutes}m ${seconds}s until your next birthday`;
+  }
+  update();
+  countdownInterval = setInterval(update, 1000);
+}
+
+/* Music fade-in (triggered on user interaction) */
+function fadeInMusic(audio){
+  try{
     audio.volume = 0;
-    audio.play().catch(err => console.log("Autoplay blocked:", err));
+    const playPromise = audio.play();
+    if (playPromise !== undefined){
+      playPromise.catch(e => {
+        // autoplay blocked — user already interacted (this was triggered by light switch),
+        // so normally it should be allowed. Still keep graceful fallback.
+        console.warn('Music playback issue:', e);
+      });
+    }
     let vol = 0;
     const fade = setInterval(() => {
-        if (vol < 1) {
-            vol += 0.02;
-            audio.volume = vol;
-        } else {
-            clearInterval(fade);
-        }
+      if (vol < 1){
+        vol = Math.min(1, vol + 0.02);
+        audio.volume = vol;
+      } else clearInterval(fade);
     }, 100);
+  } catch(e){
+    console.warn('Music error', e);
+  }
 }
 
-// Typewriter effect
-function typeWriter(text, element, speed, callback) {
-    let i = 0;
-    element.textContent = "";
-    function type() {
-        if (i < text.length) {
-            element.textContent += text.charAt(i);
-            i++;
-            setTimeout(type, speed);
-        } else if (callback) {
-            callback();
-        }
-    }
-    type();
+/* Spawn white balloons (clean up after animation) */
+function spawnBalloons(count = 14){
+  for (let i=0;i<count;i++){
+    const b = document.createElement('div');
+    b.className = 'balloon';
+    // random left position (allowing slight overflow for natural variety)
+    b.style.left = (Math.random() * 110 - 5) + 'vw';
+    // random size
+    const scale = 0.8 + Math.random() * 0.8;
+    b.style.width = (56 * scale) + 'px';
+    b.style.height = (78 * scale) + 'px';
+    // random duration for float
+    const dur = (6 + Math.random() * 4).toFixed(2);
+    b.style.animationDuration = dur + 's';
+    // slight rotation variation
+    b.style.transform = `translateY(0) rotate(${(Math.random()*30-15)}deg)`;
+    // add to container
+    balloonContainer.appendChild(b);
+    // remove after animation plus small buffer
+    setTimeout(()=> {
+      if (b && b.parentNode) b.parentNode.removeChild(b);
+    }, (parseFloat(dur) * 1000) + 600);
+  }
 }
 
-// Countdown logic
-function updateCountdown() {
-    const now = new Date();
-    let nextBirthday = new Date(now.getFullYear(), 7, 13); // 13 Aug
-    if (now > nextBirthday) {
-        nextBirthday.setFullYear(nextBirthday.getFullYear() + 1);
-    }
-    const diff = nextBirthday - now;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const minutes = Math.floor((diff / (1000 * 60)) % 60);
-    const seconds = Math.floor((diff / 1000) % 60);
-    countdownEl.textContent = `⏳ ${days}d ${hours}h ${minutes}m ${seconds}s until your next birthday!`;
+/* Art fade-in sequence */
+function revealArtworks(){
+  // reset
+  art1.style.opacity = 0; art1.style.transform = 'translateY(12px)';
+  art2.style.opacity = 0; art2.style.transform = 'translateY(12px)';
 
-    if (diff <= 0) {
-        countdownEl.style.display = "none";
-        finalMessage.style.display = "block";
-        spawnBalloons(20);
-    }
+  // first image fades (add class)
+  setTimeout(()=> {
+    art1.classList.add('fade-in');
+    art1.style.opacity = 1;
+    art1.style.transform = 'translateY(0)';
+  }, 350);
+
+  // second image fades later
+  setTimeout(()=> {
+    art2.classList.add('fade-in');
+    art2.style.opacity = 1;
+    art2.style.transform = 'translateY(0)';
+  }, 950);
 }
 
-function spawnBalloons(count) {
-    for (let i = 0; i < count; i++) {
-        const balloon = document.createElement('div');
-        balloon.classList.add('balloon');
-        balloon.style.left = `${Math.random() * 100}vw`;
-        balloon.style.background = `radial-gradient(circle at 50% 50%, hsl(${Math.random()*360}, 80%, 60%), hsl(${Math.random()*360}, 70%, 40%))`;
-        balloon.style.animationDuration = `${Math.random() * 3 + 4}s`;
-        balloonContainer.appendChild(balloon);
-        setTimeout(() => balloon.remove(), 8000);
-    }
+/* Lights on behavior */
+function lightsOn(){
+  // set warm romantic gradient
+  document.documentElement.style.background = '';
+  document.body.classList.add('lights-on-bg');
+  page.classList.add('lights-on-bg');
+
+  // show countdown (visible)
+  countdownEl.classList.add('fade-in');
+  countdownEl.style.opacity = 1;
+
+  // typewriter poem then reveal arts and final quote & balloons
+  poemEl.style.opacity = 1;
+  typeWriter(poemText, poemEl, 55, () => {
+    // after typing completes:
+    startCountdown();
+    // fade in artworks
+    revealArtworks();
+    // show final quote with delay
+    setTimeout(()=> {
+      quoteEl.classList.add('fade-in-delay-2');
+      quoteEl.style.opacity = 1;
+      // spawn a gentle small wave of balloons once
+      spawnBalloons(10);
+      // then a few more after a delay for depth
+      setTimeout(()=> spawnBalloons(8), 900);
+    }, 600);
+  });
+
+  // music fade in
+  fadeInMusic(bgMusic);
 }
 
-// Light switch event
-lightSwitch.addEventListener('change', () => {
-    if (lightSwitch.checked) {
-        document.body.style.background = "linear-gradient(to bottom, #ffafbd, #ffc3a0)";
-        fadeInMusic(bgMusic);
-        romanticTextEl.style.display = "block";
-        typeWriter(romanticMessage, romanticTextEl, 70, () => {
-            countdownEl.style.display = "block";
-            updateCountdown();
-            setInterval(updateCountdown, 1000);
-            spawnBalloons(10);
-        });
-    } else {
-        document.body.style.background = "black";
-        romanticTextEl.style.display = "none";
-        countdownEl.style.display = "none";
-        finalMessage.style.display = "none";
-        balloonContainer.innerHTML = "";
-        bgMusic.pause();
-        bgMusic.currentTime = 0;
-    }
+/* Lights off (reset) */
+function lightsOff(){
+  // remove gradient
+  document.body.classList.remove('lights-on-bg');
+  page.classList.remove('lights-on-bg');
+
+  // hide poem/art/quote
+  poemEl.textContent = '';
+  poemEl.style.opacity = 0;
+  art1.style.opacity = 0;
+  art2.style.opacity = 0;
+  quoteEl.style.opacity = 0;
+  finalMessage.style.opacity = 0;
+  // clear balloons
+  balloonContainer.innerHTML = '';
+  // stop music
+  try{
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+  }catch(e){}
+  // stop countdown
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+    countdownInterval = null;
+  }
+  countdownEl.textContent = '';
+}
+
+/* Main toggle event (safe: prevents retrigger accumulation) */
+lightSwitch.addEventListener('change', (e) => {
+  if (e.target.checked) {
+    // small guard: ensure only first click triggers fresh sequence
+    lightsOn();
+  } else {
+    lightsOff();
+  }
+});
+
+/* Initialize countdown text immediately (but it will be fully started on lights on) */
+(function initCountdownDisplay(){
+  const next = computeNextBirthday();
+  const diff = next - new Date();
+  // show initial compact message
+  if (diff <= 0) countdownEl.textContent = "🎉 It's her special day! 🎉";
+  else countdownEl.textContent = `⏳ ${Math.ceil(diff/(1000*60*60*24))}d until next birthday`;
+})();
+
+/* Accessibility: allow Enter key on checkbox to act as user interaction */
+lightSwitch.addEventListener('keydown', (ev)=> {
+  if(ev.key === 'Enter') lightSwitch.checked = !lightSwitch.checked;
 });
 </script>
-
 </body>
 </html>
