@@ -92,30 +92,7 @@
     opacity:0;
   }
 
-  /* Artwork area */
-  .artwork-wrap{
-    position:relative;
-    margin-top:20px;
-    width:min(920px, 95%);
-    display:flex;
-    gap:18px;
-    justify-content:center;
-    align-items:center;
-    pointer-events:none; /* decorative */
-  }
-
-  .artwork{
-    width:48%;
-    max-width:420px;
-    border-radius:12px;
-    box-shadow: 0 14px 40px rgba(0,0,0,0.35);
-    transform: translateY(12px);
-    opacity:0;
-    transition: opacity 1s ease, transform 1s ease;
-    object-fit:cover;
-    pointer-events:auto;
-  }
-
+ 
   /* final message area */
   #finalMessage{
     margin-top:22px;
@@ -221,11 +198,6 @@
     <div id="countdown" aria-live="polite">Loading countdown…</div>
 
     <div id="poem" aria-hidden="true"></div>
-
-    <div class="artwork-wrap" aria-hidden="true">
-      <img id="art1" class="artwork" src="Artwork.jpeg.PNG" alt="Artwork 1">
-      <img id="art2" class="artwork" src="assets/Apple2.PNG" alt="Artwork 2">
-    </div>
 
    <div id="finalMessage">
   <div id="quote" style="font-style:italic;">"May your days be painted in the colors of joy, your nights lit by the stars of hope, and your heart always surrounded by love."</div>
