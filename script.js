@@ -113,27 +113,29 @@ function createConfetti() {
 }
 
 // ===== Begin Button =====
-beginBtn.addEventListener("click", () => {
+beginBtn.addEventListener("click", async () => {
 
     document.body.classList.add("light");
-
     beginBtn.style.display = "none";
-
     message.classList.add("show");
 
-    // Play music
-    music.volume = 0.7;
-
-    music.play().catch(() => {
-        console.log("Music couldn't autoplay.");
-    });
-
-    // Balloons
-    for (let i = 0; i < 25; i++) {
-
-        setTimeout(createBalloon, i * 250);
-
+    try {
+        music.muted = false;
+        music.volume = 1;
+        await music.play();
+    } catch (err) {
+        alert("Unable to play music: " + err.message);
+        console.log(err);
     }
+
+    for (let i = 0; i < 25; i++) {
+        setTimeout(createBalloon, i * 250);
+    }
+
+    for (let i = 0; i < 180; i++) {
+        setTimeout(createConfetti, i * 25);
+    }
+});
 
     // Confetti
     for (let i = 0; i < 180; i++) {
