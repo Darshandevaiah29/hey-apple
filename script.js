@@ -1,29 +1,27 @@
 // ===== Elements =====
-const starsContainer = document.getElementById("stars");
+const stars = document.getElementById("stars");
 const countdown = document.getElementById("countdown");
 const beginBtn = document.getElementById("beginBtn");
 const message = document.getElementById("message");
-const music = document.getElementById("music");
 const balloons = document.getElementById("balloons");
 const confetti = document.getElementById("confetti");
+const music = document.getElementById("music");
 
-// ===== Create Stars =====
-for (let i = 0; i < 220; i++) {
+// ===== Generate Stars =====
+for (let i = 0; i < 250; i++) {
     const star = document.createElement("div");
     star.className = "star";
-
-    const size = Math.random() * 3 + 1;
-
-    star.style.width = size + "px";
-    star.style.height = size + "px";
 
     star.style.left = Math.random() * 100 + "vw";
     star.style.top = Math.random() * 100 + "vh";
 
-    star.style.animationDelay = Math.random() * 3 + "s";
-    star.style.animationDuration = (2 + Math.random() * 3) + "s";
+    const size = Math.random() * 3 + 1;
+    star.style.width = size + "px";
+    star.style.height = size + "px";
 
-    starsContainer.appendChild(star);
+    star.style.animationDelay = Math.random() * 2 + "s";
+
+    stars.appendChild(star);
 }
 
 // ===== Countdown =====
@@ -31,11 +29,13 @@ function updateCountdown() {
 
     const now = new Date();
 
-    let birthday = new Date(now.getFullYear(), 7, 13);
+    let target = new Date(now.getFullYear(), 7, 13, 0, 0, 0);
 
-    if (now > birthday) {
-        birthday.setFullYear(now.getFullYear() + 1);
+    if (now > target) {
+        target.setFullYear(target.getFullYear() + 1);
     }
+
+    const diff = target - now;
 
     if (
         now.getMonth() === 7 &&
@@ -45,54 +45,53 @@ function updateCountdown() {
         return;
     }
 
-    const diff = birthday - now;
-
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
-    const mins = Math.floor((diff / (1000 * 60)) % 60);
-    const secs = Math.floor((diff / 1000) % 60);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+    const seconds = Math.floor((diff / 1000) % 60);
 
     countdown.innerHTML =
-        `⏳ ${days}d ${hours}h ${mins}m ${secs}s`;
+        `⏳ ${days}d ${hours}h ${minutes}m ${seconds}s`;
 }
 
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
 // ===== Balloons =====
-function launchBalloon() {
+function createBalloon() {
 
     const balloon = document.createElement("div");
 
     balloon.className = "balloon";
 
-    const items = ["🎈","💜","✨"];
+    const emojis = ["🎈","💜","✨"];
 
     balloon.textContent =
-        items[Math.floor(Math.random() * items.length)];
+        emojis[Math.floor(Math.random() * emojis.length)];
 
-    balloon.style.left =
-        Math.random() * 100 + "vw";
+    balloon.style.left = Math.random() * 100 + "vw";
 
     balloon.style.animationDuration =
-        (6 + Math.random() * 4) + "s";
+        (6 + Math.random() * 5) + "s";
 
     balloons.appendChild(balloon);
 
-    setTimeout(() => balloon.remove(), 10000);
+    setTimeout(() => {
+        balloon.remove();
+    }, 11000);
 
 }
 
 // ===== Confetti =====
-function launchConfetti() {
+function createConfetti() {
 
-    const c = document.createElement("div");
+    const piece = document.createElement("div");
 
-    c.className = "confetti";
+    piece.className = "confetti";
 
-    c.style.left = Math.random() * 100 + "vw";
+    piece.style.left = Math.random() * 100 + "vw";
 
-    c.style.background =
+    piece.style.background =
         [
             "#FFD700",
             "#FF69B4",
@@ -102,17 +101,19 @@ function launchConfetti() {
             "#C8A2FF"
         ][Math.floor(Math.random() * 6)];
 
-    c.style.animationDuration =
+    piece.style.animationDuration =
         (3 + Math.random() * 2) + "s";
 
-    confetti.appendChild(c);
+    confetti.appendChild(piece);
 
-    setTimeout(() => c.remove(), 5000);
+    setTimeout(() => {
+        piece.remove();
+    }, 5000);
 
 }
 
 // ===== Begin Button =====
-beginBtn.addEventListener("click", async () => {
+beginBtn.addEventListener("click", () => {
 
     document.body.classList.add("light");
 
@@ -120,65 +121,67 @@ beginBtn.addEventListener("click", async () => {
 
     message.classList.add("show");
 
-    // Music
-    try{
-        music.currentTime = 0;
-        music.volume = 0.8;
-        await music.play();
-    }
-    catch(err){
-        console.log(err);
-        alert("Music couldn't start. Check that Kalank.mp3 is in the same folder as index.html.");
-    }
+    // Play music
+    music.volume = 0.7;
+
+    music.play().catch(() => {
+        console.log("Music couldn't autoplay.");
+    });
 
     // Balloons
-    for(let i=0;i<30;i++){
-        setTimeout(launchBalloon,i*250);
+    for (let i = 0; i < 25; i++) {
+
+        setTimeout(createBalloon, i * 250);
+
     }
 
     // Confetti
-    for(let i=0;i<200;i++){
-        setTimeout(launchConfetti,i*18);
+    for (let i = 0; i < 180; i++) {
+
+        setTimeout(createConfetti, i * 25);
+
     }
 
 });
 
 // ===== Shooting Stars =====
-setInterval(()=>{
+setInterval(() => {
 
-    const shoot=document.createElement("div");
+    const shooting = document.createElement("div");
 
-    shoot.style.position="fixed";
-    shoot.style.left=Math.random()*70+"vw";
-    shoot.style.top=Math.random()*40+"vh";
+    shooting.style.position = "fixed";
+    shooting.style.width = "120px";
+    shooting.style.height = "2px";
+    shooting.style.background = "white";
+    shooting.style.left = Math.random() * 70 + "vw";
+    shooting.style.top = Math.random() * 40 + "vh";
+    shooting.style.transform = "rotate(-30deg)";
+    shooting.style.boxShadow = "0 0 12px white";
+    shooting.style.zIndex = "2";
 
-    shoot.style.width="120px";
-    shoot.style.height="2px";
+    document.body.appendChild(shooting);
 
-    shoot.style.background="white";
-    shoot.style.boxShadow="0 0 15px white";
-
-    shoot.style.transform="rotate(-35deg)";
-    shoot.style.zIndex="10";
-
-    document.body.appendChild(shoot);
-
-    shoot.animate([
+    shooting.animate(
+        [
+            {
+                transform: "translate(0,0) rotate(-30deg)",
+                opacity: 1
+            },
+            {
+                transform: "translate(350px,220px) rotate(-30deg)",
+                opacity: 0
+            }
+        ],
         {
-            transform:"translate(0,0) rotate(-35deg)",
-            opacity:1
-        },
-        {
-            transform:"translate(350px,220px) rotate(-35deg)",
-            opacity:0
+            duration: 1200,
+            easing: "ease-out"
         }
-    ],{
-        duration:1200,
-        easing:"ease-out"
-    });
+    );
 
-    setTimeout(()=>{
-        shoot.remove();
-    },1200);
+    setTimeout(() => {
 
-},7000);
+        shooting.remove();
+
+    }, 1200);
+
+}, 7000);
